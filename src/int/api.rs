@@ -93,8 +93,8 @@ impl I256 {
     #[doc(alias = "popcnt")]
     #[inline]
     pub const fn count_ones(self) -> u32 {
-        let Self([a, b]) = self;
-        a.count_ones() + b.count_ones()
+        let Self([a, b, c, d]) = self;
+        a.count_ones() + b.count_ones() + c.count_ones() + d.count_ones()
     }
 
     /// Returns the number of zeros in the binary representation of `self`.
@@ -109,8 +109,8 @@ impl I256 {
     /// ```
     #[inline]
     pub const fn count_zeros(self) -> u32 {
-        let Self([a, b]) = self;
-        a.count_zeros() + b.count_zeros()
+        let Self([a, b, c, d]) = self;
+        a.count_zeros() + b.count_zeros() + c.count_zeros() + d.count_zeros()
     }
 
     /// Returns the number of leading zeros in the binary representation of
@@ -265,8 +265,8 @@ impl I256 {
     /// ```
     #[inline]
     pub const fn swap_bytes(self) -> Self {
-        let Self([a, b]) = self;
-        Self([b.swap_bytes(), a.swap_bytes()])
+        let Self([a, b, c, d]) = self;
+        Self([d.swap_bytes(), c.swap_bytes(), b.swap_bytes(), a.swap_bytes()])
     }
 
     /// Reverses the order of bits in the integer. The least significant bit
@@ -295,8 +295,8 @@ impl I256 {
     #[inline]
     #[must_use]
     pub const fn reverse_bits(self) -> Self {
-        let Self([a, b]) = self;
-        Self([b.reverse_bits(), a.reverse_bits()])
+        let Self([a, b, c, d]) = self;
+        Self([d.reverse_bits(), c.reverse_bits(), b.reverse_bits(), a.reverse_bits()])
     }
 
     /// Converts an integer from big endian to the target's endianness.

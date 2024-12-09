@@ -15,11 +15,11 @@ use core::num::ParseIntError;
 /// A 256-bit signed integer type.
 #[derive(Clone, Copy, Default, Eq, Hash, PartialEq)]
 #[repr(transparent)]
-pub struct I256(pub [i128; 2]);
+pub struct I256(pub [i64; 4]);
 
 impl I256 {
     /// The additive identity for this integer type, i.e. `0`.
-    pub const ZERO: Self = I256([0; 2]);
+    pub const ZERO: Self = I256([0; 4]);
 
     /// The multiplicative identity for this integer type, i.e. `1`.
     pub const ONE: Self = I256::new(1);
@@ -33,12 +33,37 @@ impl I256 {
         I256::from_words(value >> 127, value)
     }
 
+    #[inline]
+    const fn data(&self) -> &[i128; 2] {
+        #[cfg(target_endian = "little")]
+        {
+            unsafe { &*(self as *const Self as *const [i128; 2]) }
+        }
+        #[cfg(target_endian = "big")]
+        {
+            unimplemented!();
+        }
+    }
+
+    #[inline]
+    fn mut_data(&mut self) -> &mut [i128; 2] {
+        #[cfg(target_endian = "little")]
+        {
+            unsafe { &mut *(self as *mut Self as *mut [i128; 2]) }
+        }
+        #[cfg(target_endian = "big")]
+        {
+            unimplemented!();
+        }
+    }
+
     /// Creates a new 256-bit integer value from high and low words.
     #[inline]
     pub const fn from_words(hi: i128, lo: i128) -> Self {
         #[cfg(target_endian = "little")]
         {
-            I256([lo, hi])
+            // I256([lo, hi])
+            I256([lo as i64, (lo >> 64) as i64, hi as i64, (hi >> 64) as i64])
         }
         #[cfg(target_endian = "big")]
         {
@@ -51,8 +76,10 @@ impl I256 {
     pub const fn into_words(self) -> (i128, i128) {
         #[cfg(target_endian = "little")]
         {
-            let I256([lo, hi]) = self;
-            (hi, lo)
+            // let I256([lo, hi]) = self;
+            // (hi, lo)
+            let d = self.data();
+            (d[1], d[0])
         }
         #[cfg(target_endian = "big")]
         {
@@ -66,7 +93,7 @@ impl I256 {
     pub fn low(&self) -> &i128 {
         #[cfg(target_endian = "little")]
         {
-            &self.0[0]
+            &self.data()[0]
         }
         #[cfg(target_endian = "big")]
         {
@@ -79,7 +106,7 @@ impl I256 {
     pub fn low_mut(&mut self) -> &mut i128 {
         #[cfg(target_endian = "little")]
         {
-            &mut self.0[0]
+            &mut self.mut_data()[0]
         }
         #[cfg(target_endian = "big")]
         {
@@ -92,7 +119,7 @@ impl I256 {
     pub fn high(&self) -> &i128 {
         #[cfg(target_endian = "little")]
         {
-            &self.0[1]
+            &self.data()[1]
         }
         #[cfg(target_endian = "big")]
         {
@@ -106,7 +133,7 @@ impl I256 {
     pub fn high_mut(&mut self) -> &mut i128 {
         #[cfg(target_endian = "little")]
         {
-            &mut self.0[1]
+            &mut self.mut_data()[1]
         }
         #[cfg(target_endian = "big")]
         {
@@ -242,8 +269,8 @@ impl I256 {
     /// Cast to a `U256`.
     #[inline]
     pub const fn as_u256(self) -> U256 {
-        let Self([a, b]) = self;
-        U256([a as _, b as _])
+        let Self([a, b, c, d]) = self;
+        U256([a as _, b as _, c as _, d as _])
     }
 
     /// Cast to a primitive `isize`.
