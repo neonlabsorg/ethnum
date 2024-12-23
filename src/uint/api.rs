@@ -19,7 +19,7 @@ impl U256 {
     /// # use ethnum::U256;
     /// assert_eq!(U256::MIN, U256::new(0));
     /// ```
-    pub const MIN: Self = Self([0; 2]);
+    pub const MIN: Self = Self([0; 4]);
 
     /// The largest value that can be represented by this integer type.
     ///
@@ -34,7 +34,7 @@ impl U256 {
     ///     "115792089237316195423570985008687907853269984665640564039457584007913129639935",
     /// );
     /// ```
-    pub const MAX: Self = Self([!0; 2]);
+    pub const MAX: Self = Self([!0; 4]);
 
     /// The size of this integer type in bits.
     ///
@@ -86,8 +86,8 @@ impl U256 {
     /// ```
     #[inline]
     pub const fn count_ones(self) -> u32 {
-        let Self([a, b]) = self;
-        a.count_ones() + b.count_ones()
+        let Self([a, b, c, d]) = self;
+        a.count_ones() + b.count_ones() + c.count_ones() + d.count_ones()
     }
 
     /// Returns the number of zeros in the binary representation of `self`.
@@ -103,8 +103,8 @@ impl U256 {
     /// ```
     #[inline]
     pub const fn count_zeros(self) -> u32 {
-        let Self([a, b]) = self;
-        a.count_zeros() + b.count_zeros()
+        let Self([a, b, c, d]) = self;
+        a.count_zeros() + b.count_zeros() + c.count_zeros() + d.count_zeros()
     }
 
     /// Returns the number of leading zeros in the binary representation of
@@ -253,8 +253,8 @@ impl U256 {
     /// ```
     #[inline]
     pub const fn swap_bytes(self) -> Self {
-        let Self([a, b]) = self;
-        Self([b.swap_bytes(), a.swap_bytes()])
+        let Self([a, b, c, d]) = self;
+        Self([d.swap_bytes(), c.swap_bytes(), b.swap_bytes(), a.swap_bytes()])
     }
 
     /// Reverses the bit pattern of the integer.
@@ -279,8 +279,8 @@ impl U256 {
     /// ```
     #[inline]
     pub const fn reverse_bits(self) -> Self {
-        let Self([a, b]) = self;
-        Self([b.reverse_bits(), a.reverse_bits()])
+        let Self([a, b, c, d]) = self;
+        Self([d.reverse_bits(), c.reverse_bits(), b.reverse_bits(), a.reverse_bits()])
     }
 
     /// Converts an integer from big endian to the target's endianness.

@@ -51,8 +51,8 @@ macro_rules! impl_ops {
         __impl_ops_unop! {
             impl Not for $int {
                 not(x) {
-                    let $int([a, b]) = x;
-                    $int([!a, !b])
+                    let $int([a, b, c, d]) = x;
+                    $int([!a, !b, !c, !d])
                 }
             }
         }
@@ -371,9 +371,9 @@ macro_rules! __impl_ops_bitwise {
 
             #[inline]
             fn $method(self, rhs: &'_ $int) -> Self::Output {
-                let $int([a0, a1]) = self;
-                let $int([b0, b1]) = rhs;
-                $int([a0 $x b0, a1 $x b1])
+                let $int([a0, a1, a2, a3]) = self;
+                let $int([b0, b1, b2, b3]) = rhs;
+                $int([a0 $x b0, a1 $x b1, a2 $x b2, a3 $x b3])
             }
         }
 
@@ -528,10 +528,12 @@ macro_rules! __impl_ops_bitwise_assign {
         impl ::core::ops::$op<&'_ $int> for $int {
             #[inline]
             fn $method(&mut self, rhs: &'_ $int) {
-                let $int([a0, a1]) = self;
-                let $int([b0, b1]) = rhs;
+                let $int([a0, a1, a2, a3]) = self;
+                let $int([b0, b1, b2, b3]) = rhs;
                 *a0 $x b0;
                 *a1 $x b1;
+                *a2 $x b2;
+                *a3 $x b3;
             }
         }
 
